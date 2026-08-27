@@ -1,0 +1,10 @@
+prefix=/usr/local
+exec_prefix=${prefix}
+libdir=${exec_prefix}/lib
+includedir=${prefix}/include
+
+Name: Bitcoboost consensus library
+Description: Library for the Bitcoin consensus protocol.
+Version: 27.1.0
+Libs: -L${libdir} -lbitcoinconsensus
+Cflags: -I${includedir}

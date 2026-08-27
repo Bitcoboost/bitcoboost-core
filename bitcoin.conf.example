@@ -1,0 +1,24 @@
+# --- BitcoBoost example config (offline/local) ---
+server=1
+
+# Porte
+port=38210
+rpcport=38211
+# rpcbind=127.0.0.1
+# rpcallowip=127.0.0.1
+
+# Niente connessioni esterne
+dnsseed=0
+listen=0
+connect=0
+
+# Wallet e indirizzi
+wallet=bb_wallet
+addresstype=legacy
+
+# Fee fisse (evita fee estimation error)
+paytxfee=0.0001
+fallbackfee=0.0001
+
+# Log
+printtoconsole=1

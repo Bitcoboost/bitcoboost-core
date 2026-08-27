@@ -1,0 +1,23 @@
+const { contextBridge, ipcRenderer } = require('electron');
+contextBridge.exposeInMainWorld('bb', {
+  stato: () => ipcRenderer.invoke('app:stato'),
+  creaWallet: () => ipcRenderer.invoke('wallet:crea'),
+  salvaWallet: (frase, password) => ipcRenderer.invoke('wallet:salva', frase, password),
+  importaWallet: (frase, password) => ipcRenderer.invoke('wallet:importa', frase, password),
+  mostraFrase: () => ipcRenderer.invoke('wallet:frase'),
+  sblocca: (password) => ipcRenderer.invoke('wallet:sblocca', password),
+  blocca: () => ipcRenderer.invoke('wallet:blocca'),
+  fileRecupero: () => ipcRenderer.invoke('wallet:fileRecupero'),
+  reset: () => ipcRenderer.invoke('wallet:reset'),
+  cpuStato: () => ipcRenderer.invoke('cpu:stato'),
+  cpuImposta: (percent) => ipcRenderer.invoke('cpu:imposta', percent),
+  toggleMining: () => ipcRenderer.invoke('mining:toggle'),
+  invia: (dati) => ipcRenderer.invoke('invio:invia', dati),
+  bb1zIndirizzo: () => ipcRenderer.invoke('bb1z:indirizzo'),
+  bb1zSaldo: () => ipcRenderer.invoke('bb1z:saldo'),
+  bb1zInvia: (dati) => ipcRenderer.invoke('bb1z:invia', dati),
+  info: () => ipcRenderer.invoke('mining:info'),
+  versione: () => ipcRenderer.invoke('app:versione'),
+  apriLink: (url) => ipcRenderer.invoke('app:apriLink', url),
+  onAggiornamento: (cb) => ipcRenderer.on('app:aggiornamento', (e, d) => cb(d)),
+});

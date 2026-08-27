@@ -1,0 +1,25 @@
+# build
+*.o
+*.lo
+*.la
+*.a
+*.so
+*.exe
+/src/bitcoind
+/src/bitcoin-cli
+/src/bitcoin-tx
+/src/bitcoin-wallet
+/src/bitcoin-util
+/src/test/test_bitcoin
+Makefile
+Makefile.in
+.deps/
+.libs/
+*.log
+# backup/dev
+*.bak
+*.bak_*
+*.autobak*
+*.before-*
+# data
+*.dat

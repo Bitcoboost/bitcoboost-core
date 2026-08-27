@@ -1,0 +1,191 @@
+*** a/src/clientversion.h
+--- b/src/clientversion.h
+@@
+-#define CLIENT_NAME "Satoshi"
++#define CLIENT_NAME "BitcoBoost"
+
+*** a/src/qt/bitcoin.cpp
+--- b/src/qt/bitcoin.cpp
+@@
+-    QCoreApplication::setOrganizationName("Bitcoin");
+-    QCoreApplication::setOrganizationDomain("bitcoin.org");
+-    QCoreApplication::setApplicationName(GUIMode ? "Bitcoin-Qt" : "bitcoind");
++    QCoreApplication::setOrganizationName("BitcoBoost");
++    QCoreApplication::setOrganizationDomain("bitcoboost.org");
++    QCoreApplication::setApplicationName(GUIMode ? "BitcoBoost-Qt" : "bbd");
+
+*** a/src/qt/bitcoingui.cpp
+--- b/src/qt/bitcoingui.cpp
+@@
+-    setWindowTitle(tr("Bitcoin Core") + " - " + networkStyle->getTitleAddText());
++    setWindowTitle(tr("BitcoBoost Core") + " - " + networkStyle->getTitleAddText());
+
+*** a/src/qt/res/icons/bitcoin.icns
+--- /dev/null
+@@
++Binary files differ (replace with your BitcoBoost icon)
+
+*** a/src/qt/res/icons/bitcoin.ico
+--- /dev/null
+@@
++Binary files differ (replace with your BitcoBoost icon)
+
+*** a/share/pixmaps/bitcoin128.png
+--- /dev/null
+@@
++Binary files differ (replace with your BitcoBoost icon)
+
+*** a/src/util/system.cpp
+--- b/src/util/system.cpp
+@@
+ fs::path GetDefaultDataDir()
+ {
+ #ifdef WIN32
+-    // Windows < Vista: C:\Documents and Settings\Username\Application Data\Bitcoin
+-    // Windows >= Vista: C:\Users\Username\AppData\Roaming\Bitcoin
+-    return GetSpecialFolderPath(CSIDL_APPDATA) / "Bitcoin";
++    // Windows < Vista: C:\Documents and Settings\Username\Application Data\BitcoBoost
++    // Windows >= Vista: C:\Users\Username\AppData\Roaming\BitcoBoost
++    return GetSpecialFolderPath(CSIDL_APPDATA) / "BitcoBoost";
+ #else
+-    return GetDataDirEnv() / "Bitcoin";
++    return GetDataDirEnv() / "BitcoBoost";
+ #endif
+ }
+@@
+ bool AppInitParameterInteraction()
+ {
+     // ...
++    // BitcoBoost: default RPC creds and ports if not set by user
++    (void)gArgs.SoftSetArg("-rpcuser", "bb_user");
++    (void)gArgs.SoftSetArg("-rpcpassword", "bb_pass");
++    (void)gArgs.SoftSetArg("-rpcallowip", "127.0.0.1");
++    (void)gArgs.SoftSetArg("-server", "1");
+     // ...
+     return true;
+ }
+
+*** a/src/chainparamsbase.cpp
+--- b/src/chainparamsbase.cpp
+@@
+ class CBaseMainParams : public CChainParamsBase {
+ public:
+     CBaseMainParams() {
+-        m_rpc_port = 8332;
+-        m_data_dir = "Bitcoin";
++        m_rpc_port = 38201;
++        m_data_dir = "BitcoBoost";
+     }
+ };
+@@
+ class CBaseTestNetParams : public CChainParamsBase {
+ public:
+     CBaseTestNetParams() {
+-        m_rpc_port = 18332;
+-        m_data_dir = "Bitcoin/testnet3";
++        m_rpc_port = 38211;
++        m_data_dir = "BitcoBoost/testnet";
+     }
+ };
+@@
+ class CBaseSignetParams : public CChainParamsBase {
+ public:
+     CBaseSignetParams() {
+-        m_rpc_port = 38332;
+-        m_data_dir = "Bitcoin/signet";
++        m_rpc_port = 38221;
++        m_data_dir = "BitcoBoost/signet";
+     }
+ };
+@@
+ class CBaseRegTestParams : public CChainParamsBase {
+ public:
+     CBaseRegTestParams() {
+-        m_rpc_port = 18443;
+-        m_data_dir = "Bitcoin/regtest";
++        m_rpc_port = 38231;
++        m_data_dir = "BitcoBoost/regtest";
+     }
+ };
+
+*** a/src/chainparams.cpp
+--- b/src/chainparams.cpp
+@@
+ class CMainParams : public CChainParams {
+ public:
+     CMainParams() {
+-        strNetworkID = "main";
+-        consensus.nSubsidyHalvingInterval = 210000;
++        strNetworkID = "bitcoboost-main";
++        consensus.nSubsidyHalvingInterval = 210000; // (rimane uguale finché non decidi diversamente)
+         // ...
+-        nDefaultPort = 8333;
++        nDefaultPort = 38200;
+         // Seeds
+-        vSeeds.emplace_back("seed.bitcoin.sipa.be");
+-        vSeeds.emplace_back("dnsseed.bluematt.me");
+-        vSeeds.emplace_back("dnsseed.bitcoin.dashjr.org");
+-        vSeeds.emplace_back("seed.bitcoinstats.com");
+-        vSeeds.emplace_back("seed.bitnodes.io");
+-        vSeeds.emplace_back("seed.bitcoin.jonasschnelli.ch");
++        vSeeds.clear(); // nessun seed finché non pubblichi i tuoi
+         // Base58 prefixes unchanged for now
+     }
+ };
+@@
+ class CTestNetParams : public CChainParams {
+ public:
+     CTestNetParams() {
+-        strNetworkID = "test";
+-        nDefaultPort = 18333;
++        strNetworkID = "bitcoboost-test";
++        nDefaultPort = 38210;
+         vSeeds.clear();
+     }
+ };
+@@
+ class CRegTestParams : public CChainParams {
+ public:
+     CRegTestParams() {
+-        strNetworkID = "regtest";
+-        nDefaultPort = 18444;
++        strNetworkID = "bitcoboost-regtest";
++        nDefaultPort = 38230;
+         vSeeds.clear();
+     }
+ };
+
+*** a/src/chainparamsseeds.h
+--- b/src/chainparamsseeds.h
+@@
+-// Note that using DNS seeds results in getting IP addresses by hostname,
+-// which we do not support any more. Seeds are provided as IPv6 or IPv4.
+-static const SeedSpec6 pnSeed6_main[] = {
+-    // (omissis)
+-};
++// BitcoBoost: nessun seed per ora (bootstrap manuale)
++static const SeedSpec6 pnSeed6_main[] = {};
+ static const SeedSpec6 pnSeed6_test[] = {};
+ static const SeedSpec6 pnSeed6_signet[] = {};
+ static const SeedSpec6 pnSeed6_regtest[] = {};
+
+*** a/doc/man/bitcoind.1
+--- b/doc/man/bitcoind.1
+@@
+-.TH BITCOIND "1" "May 2024" "Bitcoin Core" "User Commands"
++.TH BBD "1" "May 2024" "BitcoBoost Core" "User Commands"
+@@
+-.B bitcoind
++.B bbd
+@@
+-Bitcoin Core is a full peer-to-peer open-source implementation of the Bitcoin protocol.
++BitcoBoost Core is a full peer-to-peer open-source implementation of the BitcoBoost protocol.
+
+*** a/doc/man/bitcoin-qt.1
+--- b/doc/man/bitcoin-qt.1
+@@
+-.TH BITCOIN-QT "1" "May 2024" "Bitcoin Core" "User Commands"
++.TH BITCOBOOST-QT "1" "May 2024" "BitcoBoost Core" "User Commands"
+@@
+-.B bitcoin-qt
++.B bitcoboost-qt

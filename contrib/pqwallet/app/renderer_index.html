@@ -1,0 +1,408 @@
+<!doctype html>
+<html lang="it"><head><meta charset="utf-8"><title>BitcoBoost Miner</title>
+<style>
+:root{
+  --bg1:#fff8ec;--bg2:#f7f2e8;--bg3:#f1ebdf;
+  --ink:#221f1a;--muted:#7c776c;--line:#ece6d9;
+  --gold:#b8801c;--gold-deep:#8a5a0c;--gold-soft:#fbeed6;--gold-ink:#6f4a0a;
+  --card:#ffffff;--pos:#2f7d4f;--shadow:0 10px 30px rgba(95,67,12,.10);
+}
+*{box-sizing:border-box}
+body{margin:0;color:var(--ink);
+  font-family:"Segoe UI",system-ui,-apple-system,sans-serif;
+  background:radial-gradient(130% 90% at 50% -15%,var(--bg1) 0%,var(--bg2) 48%,var(--bg3) 100%);
+  min-height:100vh}
+html,body{height:auto}
+.accent{height:4px;background:linear-gradient(90deg,#e7c061,var(--gold),var(--gold-deep))}
+.update{display:none;align-items:center;gap:10px;margin:0;padding:11px 20px;
+  background:linear-gradient(135deg,#fdf3df,#f7e6c3);border-bottom:1px solid #f1ddb4;color:#6f4a0a;font-size:13.5px}
+.update b{font-weight:700}
+.update .u-link{margin-left:auto;background:linear-gradient(135deg,#d9a23e,#b8801c);color:#fff;border:none;
+  border-radius:9px;padding:7px 14px;font-size:13px;font-weight:600;cursor:pointer}
+.update .u-x{background:none;border:none;color:#9b7a3a;cursor:pointer;font-size:16px;padding:0 4px}
+.topbar{display:flex;align-items:center;gap:16px;padding:14px 22px;line-height:1;
+  background:linear-gradient(135deg,#2a2118 0%,#3a2c1a 55%,#241c12 100%);
+  border-bottom:1px solid #1b150d;box-shadow:0 2px 14px rgba(40,28,8,.25);position:relative;overflow:hidden}
+.topbar::after{content:"";position:absolute;right:-40px;top:-30px;width:160px;height:160px;
+  background:radial-gradient(circle,rgba(216,162,62,.18),transparent 70%);pointer-events:none}
+.logo{width:64px;height:64px;display:flex;align-items:center;justify-content:center;flex:0 0 auto;
+  filter:drop-shadow(0 2px 6px rgba(0,0,0,.5))}
+.logo img{width:62px;height:62px;object-fit:contain;display:block;transform:translateY(-2px)}
+.brand{font-family:Georgia,"Times New Roman",serif;font-size:21px;font-weight:700;letter-spacing:.3px;
+  color:#f6e6c4;text-shadow:0 1px 2px rgba(0,0,0,.4);display:inline-flex;align-items:center;line-height:1}
+.brand span{font-weight:400;color:#cbb589;font-style:italic}
+.wrap{padding:22px 24px 30px;max-width:760px;margin:0 auto;width:100%}
+.screen{display:none;animation:fade .35s ease}.screen.active{display:block}
+@keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+h1{font-family:Georgia,serif;font-size:23px;font-weight:700;margin:0 0 6px;color:var(--ink)}
+.muted{color:var(--muted);font-size:13.5px;line-height:1.5}
+.center{text-align:center}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px;box-shadow:var(--shadow)}
+.btn{border:1px solid var(--line);background:#fff;color:var(--ink);border-radius:12px;padding:12px 16px;
+  font-size:14.5px;font-family:inherit;cursor:pointer;transition:.16s;font-weight:500}
+.btn:hover{background:#faf6ee;transform:translateY(-1px);box-shadow:0 4px 12px rgba(120,80,10,.08)}
+.btn:active{transform:none}
+.btn.gold{background:linear-gradient(135deg,#d9a23e,var(--gold));border:none;color:#fff;font-weight:600;
+  box-shadow:0 6px 16px rgba(150,95,12,.28)}
+.btn.gold:hover{filter:brightness(1.05);box-shadow:0 8px 20px rgba(150,95,12,.34)}
+.btn[disabled]{opacity:.45;cursor:default;transform:none;box-shadow:none;filter:none}
+.actions{display:flex;gap:12px;margin-top:6px}
+.status{display:flex;align-items:center;gap:14px;background:linear-gradient(135deg,#fdf3df,var(--gold-soft));
+  border:1px solid #f1ddb4;border-radius:16px;padding:16px 18px}
+.dot{width:13px;height:13px;border-radius:50%;background:var(--gold);box-shadow:0 0 0 4px rgba(184,128,28,.16);flex:0 0 auto}
+.balcard{margin:16px 0;text-align:center}
+.bal{font-family:Georgia,serif;font-size:40px;font-weight:700;line-height:1.1;margin-top:2px}
+.bal .bb{font-size:22px;color:var(--gold);font-weight:700}
+.sub{font-size:13px;margin-top:8px}
+.sub.gold-ink{color:var(--gold-ink)}
+.sub.pos{color:var(--pos);font-weight:600}
+.link{color:var(--gold);cursor:pointer;text-decoration:underline;margin-left:8px;font-size:12.5px}
+.preclista{margin-top:10px;text-align:left;border-top:1px dashed var(--line);padding-top:10px}
+.preclista .pr{display:flex;justify-content:space-between;gap:10px;font-size:12.5px;margin:5px 0}
+.preclista .pr .ad{font-family:Consolas,monospace;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:240px}
+.row{display:flex;align-items:center;gap:10px;background:#faf6ee;border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin:14px 0}
+.row .addr{margin-left:auto;font-family:Consolas,monospace;font-size:12.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:230px}
+.words{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin:16px 0}
+.word{background:#faf6ee;border:1px solid var(--line);border-radius:10px;padding:10px;font-family:Consolas,monospace;font-size:14px}
+.word b{color:var(--gold);font-weight:700;margin-right:7px;font-family:Georgia,serif}
+.warn{display:flex;gap:10px;background:var(--gold-soft);color:var(--gold-ink);border:1px solid #f1ddb4;
+  border-radius:12px;padding:13px 15px;font-size:13px;line-height:1.5;margin:10px 0 16px}
+.err{background:#fdecea;color:#8a1c12;border:1px solid #f3c9c4;border-radius:12px;padding:12px 14px;font-size:13px;line-height:1.5;margin:10px 0 14px}
+label.chk{display:flex;gap:11px;font-size:14px;margin:16px 0;align-items:flex-start;line-height:1.4}
+.field{margin:14px 0}
+.field label{display:block;color:var(--muted);font-size:13px;margin-bottom:7px}
+.parola-input{width:100%;border:1px solid var(--line);border-radius:11px;padding:12px 14px;font-size:15px;
+  font-family:Consolas,monospace;background:#fffdf9;transition:.15s}
+.parola-input:focus{outline:none;border-color:var(--gold);box-shadow:0 0 0 3px rgba(184,128,28,.15)}
+textarea.parola-input{resize:vertical;min-height:74px}
+.foot{display:flex;gap:7px;justify-content:center;color:var(--muted);font-size:12px;margin:16px 0 4px}
+.dett{margin-top:16px;border-top:1px solid var(--line);padding-top:10px}
+.dett summary{cursor:pointer;color:var(--muted);font-size:13px;outline:none}
+.dett .riga{display:flex;justify-content:space-between;font-size:13px;margin:8px 0}
+.dett .riga span:last-child{font-family:Consolas,monospace}
+.idbox{font-family:Consolas,monospace;font-size:12.5px;background:#faf6ee;border:1px solid var(--line);
+  border-radius:10px;padding:10px 12px;word-break:break-all;margin:8px 0}
+@keyframes puls{0%{opacity:.35}50%{opacity:1}100%{opacity:.35}}
+.dot.attivo{animation:puls 1.2s ease-in-out infinite}
+.attivita{margin-top:12px;height:6px;border-radius:6px;background:rgba(184,128,28,.14);overflow:hidden;display:none}
+.attivita > i{display:block;height:100%;width:40%;border-radius:6px;
+  background:linear-gradient(90deg,transparent,#d9a23e,#f3d98a,#d9a23e,transparent);
+  animation:scorri 1.4s linear infinite}
+@keyframes scorri{0%{transform:translateX(-120%)}100%{transform:translateX(320%)}}
+.lavoro{display:inline-flex;gap:3px;margin-left:6px;vertical-align:middle}
+.lavoro i{width:4px;height:4px;border-radius:50%;background:var(--gold);display:inline-block;animation:salta 1s infinite}
+.lavoro i:nth-child(2){animation-delay:.15s}.lavoro i:nth-child(3){animation-delay:.3s}
+@keyframes salta{0%,100%{opacity:.3;transform:translateY(0)}50%{opacity:1;transform:translateY(-3px)}}
+.hw{margin-top:12px;padding-top:12px;border-top:1px solid rgba(216,162,62,.18);display:flex;align-items:center;gap:10px;font-size:12.5px;color:#cbb589}
+.hw a{margin-left:auto;color:#1a1208;background:linear-gradient(135deg,#e7c061,#d9a23e);text-decoration:none;
+  padding:6px 12px;border-radius:9px;font-weight:600;white-space:nowrap;cursor:pointer}
+.hw a:hover{filter:brightness(1.05)}
+.potenza{margin-top:12px;background:#faf6ee;border:1px solid var(--line);border-radius:13px;padding:12px 14px}
+.potenza .tit{font-size:13px;color:var(--muted);margin-bottom:9px;display:flex;align-items:center;gap:7px}
+.seg{display:flex;gap:8px}
+.seg button{flex:1;border:1px solid var(--line);background:#fff;color:var(--ink);border-radius:10px;padding:10px;
+  font-size:13.5px;font-family:inherit;cursor:pointer;transition:.15s;font-weight:600}
+.seg button:hover{background:#f7efe0}
+.seg button.on{background:linear-gradient(135deg,#d9a23e,#b8801c);color:#fff;border-color:transparent;box-shadow:0 4px 12px rgba(150,95,12,.25)}
+.potenza .nota{font-size:11.5px;color:var(--muted);margin-top:8px}
+.rete{margin-top:16px;background:linear-gradient(135deg,#2a2118,#241c12);border:1px solid #1b150d;
+  border-radius:16px;padding:16px 16px 18px;color:#f0e3c6;box-shadow:0 8px 22px rgba(40,28,8,.22)}
+.rete h2{font-family:Georgia,serif;font-size:15px;font-weight:700;margin:0 0 13px;color:#e9cf94;
+  display:flex;align-items:center;gap:8px;letter-spacing:.3px}
+.rete h2::before{content:"";width:7px;height:7px;border-radius:50%;background:#d8a23e;box-shadow:0 0 0 4px rgba(216,162,62,.18)}
+.supply{margin-bottom:14px}
+.supply .top{display:flex;justify-content:space-between;align-items:baseline;font-size:12.5px;color:#cbb589;margin-bottom:6px}
+.supply .top b{font-family:Georgia,serif;font-size:17px;color:#f6e6c4;font-weight:700}
+.bar{height:9px;border-radius:6px;background:rgba(255,255,255,.08);overflow:hidden;border:1px solid rgba(216,162,62,.18)}
+.bar > i{display:block;height:100%;width:0;border-radius:6px;
+  background:linear-gradient(90deg,#caa14b,#e7c061,#f3d98a);transition:width .8s ease}
+.supply .perc{text-align:right;font-size:11.5px;color:#a9946c;margin-top:5px}
+.griglia2{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
+.tile{background:rgba(255,255,255,.04);border:1px solid rgba(216,162,62,.14);border-radius:11px;padding:11px 12px}
+.tile .et{font-size:11px;color:#a9946c;text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px}
+.tile .va{font-family:Georgia,serif;font-size:16px;color:#f6e6c4;font-weight:700;line-height:1.2}
+.tile .nota{font-size:11px;color:#b89f73;margin-top:3px}
+</style></head><body>
+<div class="accent"></div>
+<div class="topbar"><span class="logo"><img src="assets/B.png" alt="BitcoBoost"></span>
+  <span class="brand">BitcoBoost <span>Miner</span></span></div>
+<div class="update" id="barra-update"><span id="update-testo"></span><button class="u-link" id="update-scarica">Scarica</button><button class="u-x" id="update-chiudi" title="chiudi">×</button></div>
+<div class="wrap">
+
+  <div id="s-benvenuto" class="screen"><h1>Benvenuto in BitcoBoost</h1>
+    <p class="muted">Il tuo portafoglio vive solo su questo computer: le chiavi non escono mai da qui.</p>
+    <div class="actions" style="margin-top:20px;flex-direction:column">
+      <button class="btn gold" id="btn-crea">Crea un portafoglio nuovo</button>
+      <button class="btn" id="btn-carica">Ho gia un portafoglio</button></div></div>
+
+  <div id="s-importa" class="screen"><h1>Carica il tuo portafoglio</h1>
+    <p class="muted">Scrivi o incolla le 12 parole del tuo portafoglio, separate da uno spazio.</p>
+    <div class="err" id="imp-errore" style="display:none"></div>
+    <div class="field"><label>Le tue 12 parole</label><textarea class="parola-input" id="imp-parole" autocomplete="off" autocapitalize="none" spellcheck="false" placeholder="parola1 parola2 parola3 ..."></textarea></div>
+    <div class="warn">Chiunque conosce queste parole puo usare i tuoi BB. Caricale solo su un computer di cui ti fidi.</div>
+    <div class="actions"><button class="btn gold" id="btn-importa" style="flex:1">Carica portafoglio</button><button class="btn" id="btn-imp-indietro">Indietro</button></div></div>
+
+  <div id="s-sblocca" class="screen"><h1>Sblocca il portafoglio</h1>
+    <p class="muted">Inserisci la tua password per accedere al portafoglio su questo computer.</p>
+    <div class="err" id="sb-errore" style="display:none"></div>
+    <div class="field"><label>Password</label><input type="password" class="parola-input" id="sb-pass" autocomplete="off" placeholder="la tua password"></div>
+    <button class="btn gold" id="btn-sblocca" style="width:100%">Sblocca</button>
+    <div class="actions" style="margin-top:12px"><button class="btn" id="btn-sb-indietro" style="flex:1">Torna indietro</button><button class="btn" id="btn-sb-dimenticata" style="flex:1">Ho dimenticato la password</button></div>
+    <p class="muted" style="margin-top:14px;font-size:12.5px">Il mining puo girare anche senza sbloccare. La password serve per vedere le 12 parole e per inviare BB.</p></div>
+
+  <div id="s-password" class="screen"><h1>Crea una password</h1>
+    <p class="muted">Protegge le tue 12 parole su questo computer: ti verra chiesta per vederle o per inviare BB.</p>
+    <div class="err" id="pw-errore" style="display:none"></div>
+    <div class="field"><label>Password (almeno 8 caratteri)</label><input type="password" class="parola-input" id="pw-1" autocomplete="off" placeholder="scegli una password"></div>
+    <div class="field"><label>Ripeti la password</label><input type="password" class="parola-input" id="pw-2" autocomplete="off" placeholder="ripeti la stessa password"></div>
+    <div class="warn">Se dimentichi questa password non potrai piu sbloccare il portafoglio da qui: per questo le 12 parole su carta restano il recupero piu importante.</div>
+    <button class="btn gold" id="btn-pw-salva" style="width:100%">Salva e continua</button></div>
+
+  <div id="s-frase" class="screen"><h1>Salva le tue 12 parole</h1>
+    <p class="muted">Sono la chiave del tuo portafoglio.</p>
+    <div class="warn">Scrivile su carta e conservale al sicuro. Sono l'unico modo per recuperare i tuoi BB: se le perdi, nessuno puo ridartele.</div>
+    <div class="words" id="griglia-parole"></div>
+    <label class="chk"><input type="checkbox" id="chk-salvato"><span>Ho scritto le 12 parole su carta e le conservo al sicuro</span></label>
+    <button class="btn gold" id="btn-continua" disabled>Ho salvato - continua</button></div>
+
+  <div id="s-conferma" class="screen"><h1>Conferma le tue parole</h1>
+    <p class="muted">Per essere sicuri che le hai scritte bene, riscrivi le due parole richieste guardando il tuo foglio.</p>
+    <div class="err" id="conf-errore" style="display:none">Una delle parole non coincide. Controlla il foglio e riprova.</div>
+    <div class="field"><label id="lbl-a"></label><input class="parola-input" id="conf-a" autocomplete="off" autocapitalize="none" spellcheck="false" placeholder="scrivi qui la parola"></div>
+    <div class="field"><label id="lbl-b"></label><input class="parola-input" id="conf-b" autocomplete="off" autocapitalize="none" spellcheck="false" placeholder="scrivi qui la parola"></div>
+    <div class="actions" style="margin-top:14px"><button class="btn gold" id="btn-verifica" style="flex:1">Verifica e continua</button><button class="btn" id="btn-rivedi">Rivedi le parole</button></div></div>
+
+  <div id="s-mostra" class="screen"><h1>Le tue 12 parole</h1>
+    <p class="muted">Sono la chiave del tuo portafoglio attuale.</p>
+    <div class="warn">Non mostrarle a nessuno e non fotografarle. Chi le conosce puo prendere i tuoi BB.</div>
+    <div class="words" id="griglia-mostra"></div>
+    <div class="actions"><button class="btn gold" id="btn-file-recupero" style="flex:1">Salva file di recupero</button><button class="btn" id="btn-mostra-indietro">Indietro</button></div>
+    <p class="muted" style="margin-top:10px;font-size:12px">Suggerimento: inserisci una chiavetta USB e, nella finestra che si apre, scegli la chiavetta come destinazione. Il file e cifrato con la tua password: e inutile per chi non la conosce.</p>
+    <p class="muted" id="recupero-esito" style="margin-top:6px;font-size:12.5px"></p></div>
+
+  <div id="s-cambia" class="screen"><h1>Cambia portafoglio</h1>
+    <p class="muted">Stai per passare a un altro portafoglio. Quello attuale e:</p>
+    <div class="idbox" id="cambia-addr">-</div>
+    <p class="muted">Saldo attuale: <b id="cambia-saldo">0,000000</b> BB</p>
+    <div class="warn">Assicurati di aver salvato le 12 parole del portafoglio ATTUALE: senza, non potrai piu accedere ai BB che contiene. (Una copia di sicurezza viene comunque tenuta su questo PC.) Dopo potrai crearne uno nuovo o caricarne uno che gia possiedi.</div>
+    <div class="actions"><button class="btn gold" id="btn-cambia-si" style="flex:1">Ho capito, continua</button><button class="btn" id="btn-cambia-no">Annulla</button></div></div>
+
+  <div id="s-principale" class="screen">
+    <div class="status" style="flex-direction:column;align-items:stretch;gap:0">
+      <div style="display:flex;align-items:center;gap:14px"><span class="dot" id="dot"></span><div style="flex:1"><div style="font-weight:600;color:var(--gold-ink)" id="stato-testo">In pausa</div><div class="muted" style="color:var(--gold-ink)" id="stato-sotto">premi Avvia mining per contribuire</div></div></div>
+      <div class="attivita" id="attivita"><i></i></div>
+      <div class="muted" id="rassicura" style="color:#8a5a0c;font-size:12px;margin-top:8px;display:none"></div>
+    </div>
+    <div class="potenza">
+      <div class="tit">Potenza dedicata al mining</div>
+      <div class="seg"><button id="cpu-100" class="on">Turbo - usa tutto</button><button id="cpu-80">Usa l'80%</button></div>
+      <div class="nota" id="cpu-nota">Turbo: massima velocita. Scegli 80% se vuoi usare il computer per altro mentre mini.</div>
+    </div>
+    <div class="card balcard">
+      <div class="muted center">Il tuo saldo</div>
+      <div class="bal"><span id="saldo">0,000000</span> <span class="bb">BB</span></div>
+      <div class="sub gold-ink" id="saldo-arrivo" style="display:none"></div>
+      <div class="sub pos" id="saldo-sessione" style="display:none"></div>
+      <div class="sub" id="riga-prec" style="display:none"><span class="muted" id="saldo-prec-testo"></span><span class="link" id="prec-toggle">vedi</span>
+        <div class="preclista" id="prec-lista" style="display:none"></div></div>
+    </div>
+    <div class="row"><span class="muted">Il tuo indirizzo</span><span class="addr" id="indirizzo">-</span><button class="btn" id="btn-copia" style="padding:6px 12px">Copia</button></div>
+    <div class="actions"><button class="btn gold" id="btn-mining" style="flex:1">Avvia mining</button><button class="btn" id="btn-invia">Invia BB</button></div>
+    <div class="foot">Le tue chiavi restano solo su questo computer</div>
+    <div class="actions"><button class="btn" id="btn-mostra" style="flex:1;font-size:13px">Mostra le 12 parole</button><button class="btn" id="btn-cambia" style="flex:1;font-size:13px">Cambia portafoglio</button></div>
+    <details class="dett"><summary>Dettagli (per i curiosi)</summary>
+      <div class="riga"><span>Collegamenti alla rete</span><span id="d-peers">-</span></div>
+      <div class="riga"><span>Blocco attuale</span><span id="d-blocchi">-</span></div>
+      <div class="riga"><span>Motore di calcolo</span><span id="d-motore">-</span></div>
+      <div class="riga"><span>Velocita</span><span id="d-vel">-</span></div>
+      <div class="riga"><span>Ultimo segnale del motore</span><span id="d-ultimo">-</span></div>
+    </details>
+    <div class="rete">
+      <h2>La rete BitcoBoost</h2>
+      <div class="supply">
+        <div class="top"><span>BB minati finora</span><b id="r-minato">-</b></div>
+        <div class="bar"><i id="r-barra"></i></div>
+        <div class="perc"><span id="r-perc">-</span> di 21.000.000 BB totali</div>
+      </div>
+      <div class="griglia2">
+        <div class="tile"><div class="et">Premio per blocco</div><div class="va" id="r-premio">-</div><div class="nota" id="r-dimez">-</div></div>
+        <div class="tile"><div class="et">Difficolta rete</div><div class="va" id="r-diff">-</div><div class="nota">si adatta da sola</div></div>
+        <div class="tile"><div class="et">Potenza della rete</div><div class="va" id="r-hash">-</div><div class="nota">hashrate totale</div></div>
+        <div class="tile"><div class="et">Nodi collegati</div><div class="va" id="r-nodi">-</div><div class="nota">a cui sei connesso</div></div>
+      </div>
+      <div class="hw"><span>Vuoi minare piu velocemente?</span><a id="hw-link">Hardware consigliato →</a></div>
+    </div></div>
+
+  <div id="s-invio" class="screen"><h1>Invia BB</h1>
+    <p class="muted">I BB partono dal tuo PC, firmati con la tua chiave.</p>
+    <div class="field"><label>Indirizzo del destinatario</label><input class="parola-input" id="inv-addr" autocomplete="off" spellcheck="false" placeholder="bb1..."></div>
+    <div class="field"><label>Quanti BB inviare</label><input class="parola-input" id="inv-imp" autocomplete="off" inputmode="decimal" placeholder="es. 1,5"><label class="chk" style="margin:10px 0 0"><input type="checkbox" id="inv-tutto"><span>Invia tutto il saldo disponibile</span></label></div>
+    <div class="muted" style="margin:6px 0 12px">Verra aggiunta una piccola commissione di rete (pochi spiccioli di BB).</div>
+    <div id="inv-esito" class="muted" style="margin:8px 0;word-break:break-all"></div>
+    <div class="actions"><button class="btn gold" id="btn-firma" style="flex:1">Firma e invia</button><button class="btn" id="btn-indietro">Indietro</button></div></div>
+</div>
+<script>
+const $=(id)=>document.getElementById(id);
+function mostra(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));$(id).classList.add('active');}
+let fraseCreata=null;let mining=false;let confIdx=[];
+function aggiornaMining(){$('btn-mining').textContent=mining?'Ferma mining':'Avvia mining';}
+function vaiPrincipale(ind,sal,min){$('indirizzo').textContent=ind||'-';$('saldo').textContent=sal||'0,000000';mining=!!min;aggiornaMining();mostra('s-principale');aggiornaInfo();}
+function num(x){return x?parseFloat(String(x).replace(',','.')):0;}
+function aggiornaArrivo(s){
+  if(!s)return;
+  if(s.saldo)$('saldo').textContent=s.saldo;
+  const ar=$('saldo-arrivo');const va=num(s.inArrivo);
+  if(va>0){let t='di cui '+s.inArrivo+' BB in arrivo';if(s.maturaTra!=null){t+=' \u00b7 i primi spendibili tra '+s.maturaTra+' '+(s.maturaTra===1?'blocco':'blocchi');}ar.textContent=t;ar.style.display='block';}else{ar.style.display='none';}
+  const se=$('saldo-sessione');const vs=num(s.sessione);
+  if(s.minandoSessione&&vs>0){se.textContent='minati in questa sessione: +'+s.sessione+' BB';se.style.display='block';}else{se.style.display='none';}
+  const rp=$('riga-prec');const vp=num(s.precedenti);
+  if(vp>0){$('saldo-prec-testo').textContent='Altri portafogli su questo PC: '+s.precedenti+' BB';rp.style.display='block';
+    const g=$('prec-lista');g.innerHTML='';(s.precLista||[]).forEach(p=>{const d=document.createElement('div');d.className='pr';d.innerHTML='<span class="ad">'+p.indirizzo+'</span><span>'+p.saldo+' BB</span>';g.appendChild(d);});}
+  else{rp.style.display='none';$('prec-lista').style.display='none';}
+}
+let bloccato=false;
+let formatoVecchio=false;
+async function init(){const s=await window.bb.stato();if(s.haWallet){bloccato=!!s.bloccato;formatoVecchio=!!s.formatoVecchio;if(formatoVecchio){mostraFormatoVecchio();return;}vaiPrincipale(s.indirizzo,s.saldo,s.mining);aggiornaArrivo(s);}else{mostra('s-benvenuto');}}
+function mostraFormatoVecchio(){
+  if(confirm('Il portafoglio salvato e stato creato con una versione precedente e non e compatibile con la protezione a password.\n\nVuoi ripartire ora? Il vecchio file NON verra cancellato: viene messo da parte (archiviato) su questo PC. Potrai creare un nuovo portafoglio o caricarne uno con le 12 parole.')){
+    window.bb.reset().then(()=>{ formatoVecchio=false; mostra('s-benvenuto'); });
+  } else { mostra('s-benvenuto'); }
+}
+$('btn-crea').onclick=async()=>{const r=await window.bb.creaWallet();fraseCreata=r.frase;const g=$('griglia-parole');g.innerHTML='';r.frase.split(' ').forEach((w,i)=>{const d=document.createElement('div');d.className='word';d.innerHTML='<b>'+(i+1)+'</b>'+w;g.appendChild(d);});$('chk-salvato').checked=false;$('btn-continua').disabled=true;mostra('s-frase');};
+$('chk-salvato').onchange=(e)=>{$('btn-continua').disabled=!e.target.checked;};
+function scegliDue(){let a=Math.floor(Math.random()*12);let b;do{b=Math.floor(Math.random()*12);}while(b===a);return [Math.min(a,b),Math.max(a,b)];}
+$('btn-continua').onclick=()=>{confIdx=scegliDue();$('lbl-a').textContent='Scrivi la parola numero '+(confIdx[0]+1);$('lbl-b').textContent='Scrivi la parola numero '+(confIdx[1]+1);$('conf-a').value='';$('conf-b').value='';$('conf-errore').style.display='none';mostra('s-conferma');$('conf-a').focus();};
+$('btn-rivedi').onclick=()=>{mostra('s-frase');};
+$('btn-verifica').onclick=async()=>{const parole=fraseCreata.split(' ');const a=$('conf-a').value.trim().toLowerCase();const b=$('conf-b').value.trim().toLowerCase();if(a===parole[confIdx[0]]&&b===parole[confIdx[1]]){fraseDaSalvare=fraseCreata;modoImporta=false;$('pw-1').value='';$('pw-2').value='';$('pw-errore').style.display='none';mostra('s-password');$('pw-1').focus();}else{$('conf-errore').style.display='block';}};
+$('btn-carica').onclick=()=>{$('imp-parole').value='';$('imp-errore').style.display='none';mostra('s-importa');$('imp-parole').focus();};
+$('btn-imp-indietro').onclick=()=>{mostra('s-benvenuto');};
+$('btn-importa').onclick=()=>{const frase=$('imp-parole').value.trim();if(!frase){$('imp-errore').textContent='Scrivi le 12 parole.';$('imp-errore').style.display='block';return;}fraseDaSalvare=frase;modoImporta=true;$('pw-1').value='';$('pw-2').value='';$('pw-errore').style.display='none';mostra('s-password');$('pw-1').focus();};
+let fraseDaSalvare=null;let modoImporta=false;let azioneDopoSblocco=null;
+$('btn-pw-salva').onclick=async()=>{const p1=$('pw-1').value;const p2=$('pw-2').value;$('pw-errore').style.display='none';if(p1.length<8){$('pw-errore').textContent='La password deve avere almeno 8 caratteri.';$('pw-errore').style.display='block';return;}if(p1!==p2){$('pw-errore').textContent='Le due password non coincidono.';$('pw-errore').style.display='block';return;}$('btn-pw-salva').disabled=true;let r;try{r=modoImporta?await window.bb.importaWallet(fraseDaSalvare,p1):await window.bb.salvaWallet(fraseDaSalvare,p1);}catch(e){r={ok:false,messaggio:'Errore imprevisto.'};}$('btn-pw-salva').disabled=false;if(r&&r.ok){fraseDaSalvare=null;fraseCreata=null;bloccato=false;vaiPrincipale(r.indirizzo,'0,000000',false);}else{$('pw-errore').textContent=(r&&r.messaggio)||'Non sono riuscito a salvare.';$('pw-errore').style.display='block';}};
+$('btn-sblocca').onclick=async()=>{const p=$('sb-pass').value;$('sb-errore').style.display='none';$('btn-sblocca').disabled=true;let r;try{r=await window.bb.sblocca(p);}catch(e){r={ok:false};}$('btn-sblocca').disabled=false;if(r&&r.ok){bloccato=false;tentativiSblocco=0;if(azioneDopoSblocco==='mostra'){azioneDopoSblocco=null;await apriMostraParole();}else if(azioneDopoSblocco==='invia'){azioneDopoSblocco=null;mostra('s-invio');}else{mostra('s-principale');}}else{tentativiSblocco++;let msg=(r&&r.messaggio)||'Password errata.';if(tentativiSblocco>=3)msg+=' Se l\'hai dimenticata, usa "Ho dimenticato la password" qui sotto.';$('sb-errore').textContent=msg;$('sb-errore').style.display='block';}};
+let tentativiSblocco=0;
+$('btn-sb-indietro').onclick=()=>{azioneDopoSblocco=null;mostra('s-principale');};
+$('btn-sb-dimenticata').onclick=()=>{
+  if(confirm('Se hai dimenticato la password NON e possibile recuperarla. Puoi pero ripartire usando le tue 12 parole scritte su carta o il file di recupero.\n\nVuoi ripartire ora? Il portafoglio attuale verra archiviato (non cancellato) su questo PC.')){
+    window.bb.reset().then(()=>{ bloccato=false; tentativiSblocco=0; mostra('s-benvenuto'); });
+  }
+};
+$('btn-file-recupero').onclick=async()=>{$('recupero-esito').textContent='Salvataggio in corso...';const r=await window.bb.fileRecupero();$('recupero-esito').textContent=(r&&r.ok)?('File di recupero salvato. Conservalo in un posto sicuro: e inutile senza la tua password.'):((r&&r.messaggio)||'Salvataggio annullato.');};
+$('btn-copia').onclick=()=>{navigator.clipboard.writeText($('indirizzo').textContent);};
+async function apriMostraParole(){const r=await window.bb.mostraFrase();const g=$('griglia-mostra');g.innerHTML='';if(r&&r.ok&&r.frase){r.frase.split(' ').forEach((w,i)=>{const d=document.createElement('div');d.className='word';d.innerHTML='<b>'+(i+1)+'</b>'+w;g.appendChild(d);});$('recupero-esito').textContent='';mostra('s-mostra');return true;}return false;}
+$('btn-mostra').onclick=()=>{azioneDopoSblocco='mostra';$('sb-pass').value='';$('sb-errore').style.display='none';mostra('s-sblocca');$('sb-pass').focus();};
+$('btn-mostra-indietro').onclick=async()=>{try{await window.bb.blocca();}catch(e){}mostra('s-principale');};
+$('btn-cambia').onclick=()=>{$('cambia-addr').textContent=$('indirizzo').textContent;$('cambia-saldo').textContent=$('saldo').textContent;mostra('s-cambia');};
+$('btn-cambia-no').onclick=()=>{mostra('s-principale');};
+$('btn-cambia-si').onclick=async()=>{if(mining){try{const r=await window.bb.toggleMining();if(r&&typeof r.mining==='boolean')mining=r.mining;}catch(e){}aggiornaMining();}mostra('s-benvenuto');};
+$('prec-toggle').onclick=()=>{const g=$('prec-lista');const open=g.style.display!=='none';g.style.display=open?'none':'block';$('prec-toggle').textContent=open?'vedi':'nascondi';};
+$('btn-mining').onclick=async()=>{$('btn-mining').disabled=true;const r=await window.bb.toggleMining();$('btn-mining').disabled=false;if(r&&r.ok){mining=r.mining;aggiornaMining();}else{alert((r&&r.errore)||'Non sono riuscito ad avviare il mining. Controlla che i programmi del nodo e del motore siano nella cartella bin.');mining=false;aggiornaMining();}};
+$('btn-invia').onclick=()=>{azioneDopoSblocco='invia';$('sb-pass').value='';$('sb-errore').style.display='none';mostra('s-sblocca');$('sb-pass').focus();};
+$('btn-indietro').onclick=async()=>{try{await window.bb.blocca();}catch(e){}mostra('s-principale');};
+$('inv-tutto').onchange=(e)=>{$('inv-imp').disabled=e.target.checked;};
+$('btn-firma').onclick=async()=>{const indirizzo=$('inv-addr').value.trim();const tutto=$('inv-tutto').checked;const importo=($('inv-imp').value||'').replace(',','.').trim();if(!indirizzo){$('inv-esito').textContent='Scrivi l\'indirizzo del destinatario.';return;}if(!tutto&&!(parseFloat(importo)>0)){$('inv-esito').textContent='Scrivi quanti BB inviare, oppure spunta "tutto".';return;}$('btn-firma').disabled=true;$('inv-esito').textContent='Invio in corso...';const r=await window.bb.invia({indirizzo,tutto,importo});$('btn-firma').disabled=false;$('inv-esito').textContent=(r&&r.messaggio)||(r&&r.ok?'Inviato.':'Errore.');if(r&&r.ok){setTimeout(()=>mostra('s-principale'),3500);}};
+setInterval(async()=>{if(!$('s-principale').classList.contains('active'))return;try{const s=await window.bb.stato();aggiornaArrivo(s);if(s&&typeof s.mining==='boolean'){mining=s.mining;aggiornaMining();}}catch(e){}},12000);
+function tradMotore(info){
+  if(!info.mining)return{t:'In pausa',s:'premi Avvia mining per contribuire',a:false};
+  if(info.sincronizzando)return{t:'Sto allineando la catena',s:'blocco '+(info.blocchi!=null?info.blocchi:'-'),a:true};
+  if(info.peers===0)return{t:'In attesa di collegarmi alla rete',s:'0 collegamenti: senza altri nodi non posso trovare blocchi',a:true};
+  if(!info.motoreVivo)return{t:'Motore fermo',s:'forse bloccato dall antivirus: aggiungi un esclusione alla cartella del motore',a:false};
+  if(info.hashrate)return{t:'Sto cercando blocchi',s:'velocita circa '+info.hashrate,a:true,lavora:true};
+  return{t:'Motore in avvio',s:'attendi qualche secondo',a:true};
+}
+async function aggiornaInfo(){
+  if($('s-benvenuto').classList.contains('active')||$('s-sblocca').classList.contains('active'))return;
+  if(!$('s-principale').classList.contains('active'))return;
+  let info;try{info=await window.bb.info();}catch(e){return;}
+  const r=tradMotore(info);
+  const lavora=!!(info.mining && info.motoreVivo);
+  $('stato-testo').innerHTML=r.t+(lavora?' <span class="lavoro"><i></i><i></i><i></i></span>':'');
+  $('stato-sotto').textContent=r.s;$('dot').className='dot'+(r.a?' attivo':'');
+  $('attivita').style.display=lavora?'block':'none';
+  // cronometro "sto cercando da..."
+  if(lavora){ if(!window._cercaDa) window._cercaDa=Date.now(); }
+  else { window._cercaDa=null; }
+  const rass=$('rassicura');
+  if(lavora){
+    const sec=Math.floor((Date.now()-window._cercaDa)/1000);
+    const mm=Math.floor(sec/60), ss=sec%60;
+    const tempo=(mm>0?mm+' min ':'')+ss+' s';
+    rass.textContent='Il tuo computer sta lavorando da '+tempo+'. E normale che trovare un blocco richieda tempo: continua a cercare senza sosta.';
+    rass.style.display='block';
+  } else { rass.style.display='none'; }
+  $('d-peers').textContent=(info.peers!=null?info.peers:'-');
+  $('d-blocchi').textContent=(info.blocchi!=null?info.blocchi:'-');
+  $('d-motore').textContent=info.motoreVivo?'attivo':'fermo';
+  $('d-vel').textContent=info.hashrate||'-';
+  $('d-ultimo').textContent=(info.ultimaAttivitaSec==null?'-':info.ultimaAttivitaSec+' s fa');
+  $('d-vel').textContent=info.hashrate||'-';
+  aggiornaRete(info);
+  mining=info.mining;aggiornaMining();
+}
+function fmtBB(n){if(n==null)return '-';return Math.round(n).toLocaleString('it-IT');}
+function fmtHash(h){if(h==null)return '-';const u=['H/s','kH/s','MH/s','GH/s','TH/s','PH/s'];let i=0;let v=Number(h);while(v>=1000&&i<u.length-1){v/=1000;i++;}return (v<10?v.toFixed(2):v.toFixed(0))+' '+u[i];}
+function fmtDiff(d){if(d==null)return '-';if(d<1)return d.toExponential(2);if(d>=1e6)return (d/1e6).toFixed(2)+'M';if(d>=1000)return (d/1000).toFixed(2)+'k';return d.toFixed(2);}
+function aggiornaRete(info){
+  const r=info.rete;
+  if(!r){return;}
+  $('r-minato').textContent=fmtBB(r.minato)+' BB';
+  $('r-perc').textContent=(r.percentuale<0.01?r.percentuale.toFixed(4):r.percentuale.toFixed(2))+'%';
+  $('r-barra').style.width=Math.min(100,Math.max(0.4,r.percentuale))+'%';
+  $('r-premio').textContent=(r.premioOra%1===0?r.premioOra:r.premioOra.toFixed(4))+' BB';
+  if(r.mancanoAlDimezzamento!=null&&r.premioDopoDimezzamento!=null){
+    $('r-dimez').textContent='tra '+r.mancanoAlDimezzamento.toLocaleString('it-IT')+' blocchi scende a '+(r.premioDopoDimezzamento%1===0?r.premioDopoDimezzamento:r.premioDopoDimezzamento.toFixed(4))+' BB';
+  }else{$('r-dimez').textContent='';}
+  $('r-diff').textContent=fmtDiff(info.difficolta);
+  $('r-hash').textContent=fmtHash(info.hashrateRete);
+  $('r-nodi').textContent=(info.peers!=null?info.peers:'-');
+}
+if($('hw-link'))$('hw-link').onclick=()=>{window.bb.apriLink('https://bitcoboost.com/hardware');};
+async function aggiornaCpuUI(){try{const c=await window.bb.cpuStato();segnaCpu(c.percent);$('cpu-nota').textContent=(c.percent===100?'Turbo: sto usando tutti i '+c.totale+' core del processore.':'Sto usando circa l\'80% ('+c.cores+' core su '+c.totale+'), cosi puoi usare il PC per altro.');}catch(e){}}
+function segnaCpu(p){$('cpu-100').className=(p===100?'on':'');$('cpu-80').className=(p===80?'on':'');}
+$('cpu-100').onclick=async()=>{segnaCpu(100);const c=await window.bb.cpuImposta(100);await aggiornaCpuUI();};
+$('cpu-80').onclick=async()=>{segnaCpu(80);const c=await window.bb.cpuImposta(80);await aggiornaCpuUI();};
+aggiornaCpuUI();
+setInterval(aggiornaInfo,3000);
+function mostraAggiornamento(a){if(!a||!a.versione)return;const b=$('barra-update');$('update-testo').innerHTML='Disponibile la versione <b>'+a.versione+'</b>'+(a.note?' \u00b7 '+a.note:'');$('update-scarica').onclick=()=>{window.bb.apriLink(a.url||'https://bitcoboost.com/downloads/');};$('update-chiudi').onclick=()=>{b.style.display='none';};b.style.display='flex';}
+if(window.bb.onAggiornamento)window.bb.onAggiornamento(mostraAggiornamento);
+window.bb.versione().then(v=>{if(v&&v.aggiornamento)mostraAggiornamento(v.aggiornamento);}).catch(()=>{});
+init();
+</script><script>
+/* bb1z: aggiunte quantum-safe (additive, non toccano il flusso classico) */
+(function(){
+  function $(id){return document.getElementById(id);}
+  try {
+    var act = document.querySelector('#s-principale .actions');
+    if (act && !$('btn-bb1z-addr')) {
+      var b=document.createElement('button'); b.id='btn-bb1z-addr'; b.className='btn';
+      b.textContent='Indirizzo quantum-safe'; b.style.flex='1 1 100%'; b.style.marginTop='8px';
+      b.onclick=async function(){
+        var r=await window.bb.bb1zIndirizzo();
+        if(r&&r.ok){ try{await navigator.clipboard.writeText(r.indirizzo);}catch(e){} alert("Indirizzo quantum-safe (copiato):\n\n"+r.indirizzo); }
+        else{ alert((r&&r.messaggio)||"Sblocca prima il portafoglio."); }
+      };
+      act.appendChild(b);
+    }
+  } catch(e){}
+  try {
+    var btn=$('btn-firma');
+    if (btn && !$('btn-firma-bb1z')) {
+      var q=document.createElement('button'); q.id='btn-firma-bb1z'; q.className='btn';
+      q.textContent='Invia in modalità quantum-safe'; q.style.marginTop='8px'; q.style.width='100%';
+      btn.parentNode.insertBefore(q, btn.nextSibling);
+      q.onclick=async function(){
+        var indirizzo=($('inv-addr').value||'').trim();
+        var tutto=$('inv-tutto').checked;
+        var importo=($('inv-imp').value||'').replace(',','.').trim();
+        if(!indirizzo){$('inv-esito').textContent="Scrivi l'indirizzo del destinatario.";return;}
+        if(!tutto&&!(parseFloat(importo)>0)){$('inv-esito').textContent="Scrivi quanti BB inviare, oppure spunta tutto.";return;}
+        q.disabled=true; $('inv-esito').textContent="Invio quantum-safe in corso...";
+        var r=await window.bb.bb1zInvia({indirizzo:indirizzo,tutto:tutto,importo:importo});
+        q.disabled=false;
+        $('inv-esito').textContent=(r&&r.messaggio)||(r&&r.ok?"Inviato.":"Errore.");
+      };
+    }
+  } catch(e){}
+})();
+</script>
+</body></html>
