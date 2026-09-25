@@ -35,7 +35,7 @@ sha256sum -c SHA256SUMS
 | Project reward | 5% of the subsidy, blocks 2,001–209,999 only (`GetFounderRewardForBlock` in `src/validation.cpp`) |
 | Coinbase maturity | 100 blocks |
 | P2P / RPC port | 38210 / 18332 |
-| Address format | bech32, HRP `bb` (`bb1…`); legacy P2PKH version 25 |
+| Address format | bech32, HRP `bb`: **`bb1q…`** (witness v0, ECDSA) and **`bb1z…`** (witness v2, quantum-safe — ML-DSA key derived from the same 12-word phrase as the ECDSA one, witness program = `shake256(ecdsaPub ‖ mldsaPub)`); legacy P2PKH version 25 |
 | Message magic | `0xBB160626` |
 | Genesis block | `00008e92cdd72d798964ea9833c612371e93ddbcbb6a8a1ffe71e591f5b017df` |
 
