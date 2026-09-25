@@ -33,10 +33,63 @@ static int64_t BBGetTargetTimespan(int nHeight, const Consensus::Params& params)
     return interval * params.nPowTargetSpacing;
 }
 
+// --- Bitcoboost LWMA-1 (Zawy): difficolta ricalcolata a ogni blocco su nLwmaWindow blocchi. ---
+// Blindata contro il trabocco a 256 bit: se il target calcolato supererebbe powLimit, si fissa powLimit.
+static unsigned int LwmaGetNextWorkRequired(const CBlockIndex* pindexLast, const Consensus::Params& params)
+{
+    const int64_t T = params.nPowTargetSpacing;
+    const int64_t N = params.nLwmaWindow;
+    const int64_t k = N * (N + 1) * T / 2;
+    const int64_t height = pindexLast->nHeight + 1;
+    const arith_uint256 powLimit = UintToArith256(params.powLimit);
+
+    if (pindexLast->nHeight < N) return pindexLast->nBits;
+
+    arith_uint256 sum_target;
+    int64_t t = 0, j = 0;
+    for (int64_t i = height - N; i < height; i++) {
+        const CBlockIndex* block = pindexLast->GetAncestor(i);
+        const CBlockIndex* blockPrev = pindexLast->GetAncestor(i - 1);
+        int64_t solvetime = block->GetBlockTime() - blockPrev->GetBlockTime();
+        if (solvetime > 6 * T) solvetime = 6 * T;
+        j++;
+        t += solvetime * j;
+        arith_uint256 target;
+        target.SetCompact(block->nBits);
+        sum_target += target / (k * N);
+    }
+    if (t < k / 10) t = k / 10;
+
+    arith_uint256 tt = arith_uint256((uint64_t)t);
+    arith_uint256 next_target;
+    if (sum_target > powLimit / tt) {
+        next_target = powLimit;
+    } else {
+        next_target = sum_target * tt;
+        if (next_target > powLimit) next_target = powLimit;
+    }
+    return next_target.GetCompact();
+}
+
+// Bitcoboost: LWMA e' attivo per il blocco che segue pindexLast?
+// A DATA se nLwmaTime e' impostata (median-time-past, robusto ai timestamp singoli);
+// altrimenti ad ALTEZZA se nLwmaHeight e' impostata (usata nelle prove).
+static bool BBLwmaAttivo(const CBlockIndex* pindexLast, const Consensus::Params& params)
+{
+    if (params.nLwmaTime > 0) return pindexLast->GetMedianTimePast() >= params.nLwmaTime;
+    if (params.nLwmaHeight > 0) return (pindexLast->nHeight + 1) >= params.nLwmaHeight;
+    return false;
+}
+
 unsigned int GetNextWorkRequired(const CBlockIndex* pindexLast, const CBlockHeader *pblock, const Consensus::Params& params)
 {
     assert(pindexLast != nullptr);
     unsigned int nProofOfWorkLimit = UintToArith256(params.powLimit).GetCompact();
+
+    // Bitcoboost: dall'attivazione, difficolta ricalcolata a OGNI blocco (LWMA).
+    if (BBLwmaAttivo(pindexLast, params)) {
+        return LwmaGetNextWorkRequired(pindexLast, params);
+    }
 
     // Bitcoboost: usa l'intervallo di retarget appropriato (veloce in early launch, normale dopo).
     int64_t nRetargetInterval = BBGetRetargetInterval(pindexLast->nHeight + 1, params);
@@ -105,6 +158,7 @@ unsigned int CalculateNextWorkRequired(const CBlockIndex* pindexLast, int64_t nF
 bool PermittedDifficultyTransition(const Consensus::Params& params, int64_t height, uint32_t old_nbits, uint32_t new_nbits)
 {
     if (params.fPowAllowMinDifficultyBlocks) return true;
+    if (params.nLwmaHeight > 0 && height >= params.nLwmaHeight) return true;
 
     // Bitcoboost: usa intervallo + timespan effettivi a questa altezza.
     int64_t nRetargetInterval = BBGetRetargetInterval((int)height, params);

@@ -102,6 +102,9 @@ public:
         // invece dei 2016 standard (~2 settimane). Stabilizza la difficolta in early launch.
         consensus.nFastRetargetPeriod = 144;
         consensus.nFastRetargetUntilHeight = 2016;
+        consensus.nLwmaTime = 1789120800;   // LWMA: attivazione a DATA (median-time-past)
+        consensus.nLwmaHeight = 20100;  // da qui headerssync non pretende nBits costanti
+        consensus.nLwmaWindow = 90;
 
         // BIP9 deployments
         consensus.vDeployments[Consensus::DEPLOYMENT_TESTDUMMY].bit = 28;
@@ -288,6 +291,33 @@ public:
                 {14260, uint256S("0000000005171fe862bc31c3058b72fdbcc08806c16eeac98565b2c37e400daf")},
                 {14360, uint256S("0000000000d55375fc0c7fb2094bcd69089f6e3329e40eee2f6ad7e13126deda")},
                 {14460, uint256S("000000000531ee15242cd94ba402a150bc450f8c2fe57f45f9361cd771e0b7ea")},
+                {14560, uint256S("000000000023f6303f8d2294b53ad44bdad60d4447a7ae2b7c3cc62b733f0315")},
+                {14740, uint256S("00000000053a2c71c0a2f413a8460d7b97c19ea2f9e45f5728dd592f0a63a0be")},
+                {15520, uint256S("0000000003cd3b08b82a9a381d41d3c057e22b2989cd551ae7a53064a96ec9c7")},
+                {17280, uint256S("0000000001998ab7cc1eec14ad2dc222d3234bc5819a22f40d7b7c716318a15d")},
+                {18280, uint256S("00000000007d550b47bc8b14df870240a4cc0d29a57aa35f74385ced78fdfcb0")},
+                {18460, uint256S("00000000008c3d8245e1cd43a5fda4eb67f9b3121b78eb336cebcadff0f5d162")},
+                {18560, uint256S("00000000014762a2f89f3062e1dc15d400e66f364f37e056d492bfccfe8fb2a6")},
+                {18960, uint256S("0000000000c86f936030d8284fcf066d1c1068add738e0c70bb60a166c08f902")},
+                {19180, uint256S("00000000014e645f336cf8f2e6dc5e3dacea2064196ea17f1b0ae71814eac878")},
+                {19380, uint256S("000000000061401e2116b4eee2021858196c549163d2b1db9339094962d6ef45")},
+                {19620, uint256S("0000000000cea9b3b37d16f1c71fec3e081f41549641961a60bee35682b14850")},
+                {19860, uint256S("0000000000fd7799fc643aacefd108b4b53d60f44e5f22291b79043afde929fc")},
+                {19960, uint256S("0000000000a0eca47f5be902dd4218a52a329d87d3e396bcffcc3904f92292ed")},
+                {20060, uint256S("000000000174ffc0c83d51710ee61b03183165619bb5bbbc328a7c0856118a38")},
+                {20220, uint256S("0000000003925cad40add90e70f7af91072f04012d2be9a59529033cc9578015")},
+                {20340, uint256S("0000000003aa4a8858ae1af79cb74f076195b9f1c2f8a739c0d1356e8ea24d8c")},
+                {20480, uint256S("000000000048cb72327253a6249985da3f691bfc8c0292958e9ed474da43b2f8")},
+                {20620, uint256S("0000000002ab00ae75cd0dfac726f3f2c0b936b23ac6f95c45f22e818b2a3002")},
+                {20780, uint256S("0000000003ac679d85f7b3125a35ff1fbafb07a3fac172f624735b5befd3290c")},
+                {20900, uint256S("00000000041558aea4dd562b25990c8da8dbd389b736f53b5b0a860834cbb57e")},
+                {21020, uint256S("0000000001995acdced2ec739df693c63ba815aae797d2761bda2bad94882be8")},
+                {21140, uint256S("0000000001db8514925c1e049a97ac1c7090713db06d51f1cf534b32cb8a4232")},
+                {21280, uint256S("0000000009778fdac9f68f65e1a26129aa295e9172a1503407bf5c97def7aeb3")},
+                {21420, uint256S("0000000009676f511364574e54f83c3891d6d07f9c3f917f01a3feca27d0ba46")},
+                {21580, uint256S("0000000005bf22c1592de8c186eccb65869eda4d6a0928628023d3d6f1f94ff8")},
+                {21700, uint256S("0000000000b1467469d136adfef9d50fd286776deedd131462ff5f7d1cfa8f61")},
+                {21880, uint256S("0000000005de5a4e99ac3a061c26e627222a6a245f59ed1aacdf3c64b94910ca")},
             }
         };
 

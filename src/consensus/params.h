@@ -116,6 +116,14 @@ struct Params {
      * invece dei DifficultyAdjustmentInterval() standard. */
     int64_t nFastRetargetPeriod;
     int64_t nFastRetargetUntilHeight;
+    /** Bitcoboost LWMA: difficolta ricalcolata a OGNI blocco.
+     *  nLwmaTime  = attivazione a DATA (median-time-past >= nLwmaTime). 0 = non usata.
+     *  nLwmaHeight= attivazione ad ALTEZZA (usata nelle prove) e soglia da cui rilassare
+     *               il controllo anti-DoS di headerssync (che ha solo l'altezza). 0 = non usata.
+     *  nLwmaWindow= quanti blocchi guarda la media pesata. */
+    int64_t nLwmaTime{0};
+    int64_t nLwmaHeight{0};
+    int64_t nLwmaWindow{90};
     std::chrono::seconds PowTargetSpacing() const
     {
         return std::chrono::seconds{nPowTargetSpacing};

@@ -14,7 +14,7 @@
 ## Releases
 
 Official binaries are published on the [Releases](https://github.com/Bitcoboost/bitcoboost-core/releases) page with `SHA256SUMS`.
-Latest: **v1.0.0 "Exchange Stable"** — Linux x86_64 (`.tar.gz`) and Windows x64 (`.zip`), `bitcoind` + `bitcoin-cli`.
+Latest: **v1.1.0 — required for every node.** It implements the LWMA-1 difficulty rule active since block 20,118 (see the parameter table below). Nodes built from **v1.0.0 or earlier stop at block 20,117** and cannot follow the chain. Linux x86_64 (`.tar.gz`) and Windows x64 (`.zip`), `bitcoind` + `bitcoin-cli`; also at <https://bitcoboost.com/downloads/releases/> with `SHA256SUMS` signed by the release key (`B953191753915A465728EFCD8739ECBDF90D266B`).
 
 Verify a download:
 ```
