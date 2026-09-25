@@ -29,6 +29,7 @@ sha256sum -c SHA256SUMS
 | Consensus | Proof-of-Work, X16RV2 |
 | Max supply | **21,010,999.9769 BCBO** — 21,000,000 from the halving schedule (which starts at block 2,001) plus the 11,000 emitted during the launch slow-start. Like Bitcoin, the figure is not round because a few satoshi are lost to rounding at each halving. |
 | Block time | 600 s |
+| Difficulty adjustment | LWMA-1, recalculated at **every block** over a 90-block window, active since block 20,118 (12 September 2026). Blocks before that used Bitcoin's original 2,016-block retarget; the change was a scheduled consensus upgrade (`LwmaGetNextWorkRequired` in `src/pow.cpp`, `nLwmaWindow` in `src/kernel/chainparams.cpp`). |
 | Block subsidy | 50 BCBO (slow start: blocks 1–1,000 = 1 BCBO, 1,001–2,000 = 10 BCBO) |
 | Halving | every 210,000 blocks; first halving at block 212,001 |
 | Project reward | 5% of the subsidy, blocks 2,001–209,999 only (`GetFounderRewardForBlock` in `src/validation.cpp`) |

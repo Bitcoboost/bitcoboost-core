@@ -1,9 +1,32 @@
+> # ⚠️ HISTORICAL DOCUMENT — DO NOT USE FOR INTEGRATION
+>
+> This is a **pre-mainnet design note written on 9 May 2026**, before the network launched. It is kept for
+> historical reference only. **Several values below were changed before launch and do NOT describe the live
+> network.** In particular:
+>
+> | In this document | Live network |
+> |---|---|
+> | Supply "20,961,000 BB" | **21,010,999.9769 BCBO** |
+> | Ticker "BB" | **BCBO** (renamed on 24 August 2026) |
+> | Magic bytes `0xBB 0x07 0x14 0x57` | **`0xBB 0x16 0x06 0x26`** |
+> | Difficulty "every 144 blocks" | **LWMA-1, every block, 90-block window, since block 20,118** |
+>
+> **Authoritative parameters** are in [README.md](README.md), in the source code (`src/kernel/chainparams.cpp`,
+> `src/validation.cpp`, `src/pow.cpp`) and at https://bitcoboost.com/developers/specifications/ — and can be
+> verified against any node with `getblockchaininfo` and `gettxoutsetinfo`.
+>
+> ---
+>
+> **DOCUMENTO STORICO — NON USARE PER L'INTEGRAZIONE.** Note di progettazione del 9 maggio 2026, precedenti al
+> lancio della rete: diversi valori sono stati cambiati prima del lancio e non descrivono la rete viva. I valori
+> autorevoli stanno nel README, nel codice sorgente e su bitcoboost.com.
+
 # BitcoBoost Mainnet Launch — Design Document
 
 > **Versione**: 1.0
 > **Data decisioni**: 9 maggio 2026
 > **Branch Git**: `mainnet-launch-redesign`
-> **Stato**: implementazione in corso
+> **Stato**: ~~implementazione in corso~~ → **superato: la mainnet è viva dal 17 giugno 2026 con parametri diversi (vedi l'avviso in cima)**
 
 Questo documento descrive le decisioni di design definitive per il lancio della mainnet di BitcoBoost. Ogni scelta è stata presa dopo discussione e ha implicazioni di lungo periodo.
 
